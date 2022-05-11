@@ -10,7 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: salesforce/salesforcedx:latest-rc-full
-      volume: 
     steps:
       - run: sfdx -v
       - run: java -version
