@@ -1,4 +1,4 @@
-name: "SFDC Pull Request"
+name: SFDC Pull Request
 on: [pull_request]
   jobs:
     build_check:
