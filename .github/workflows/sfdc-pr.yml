@@ -10,4 +10,4 @@ jobs:
     runs-on: ubuntu-latest
     container: salesforce/salesforcedx:latest-rc-full
     steps:
-      - echo "working"
+      - run: sfdx -v
