@@ -1,7 +1,7 @@
 name: SFDC Pull Request
 on: 
   pull_request:
-    types: [opened, ready_for_review]
+    types: [opened, ready_for_review, review_requested]
 jobs:
   build_check:
     if: ${{ github.ref != 'master'}}
