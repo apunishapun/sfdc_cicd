@@ -11,3 +11,4 @@ jobs:
     container: salesforce/salesforcedx:latest-rc-full
     steps:
       - run: sfdx -v
+      - run: ls -la
