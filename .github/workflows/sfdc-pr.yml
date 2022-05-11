@@ -8,7 +8,5 @@ jobs:
   build_check:
     if: ${{ github.ref != 'master'}}
     runs-on: ubuntu-latest
-    container: salesforce/salesforcedx:latest-rc-full
     steps:
-      - run: sfdx -v
       - run: ls -la
