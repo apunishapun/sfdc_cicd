@@ -12,4 +12,4 @@ jobs:
       - run: mkdir bin && sfdx -v && java -version && ls -la
       - run: node scripts/js/sfbuilds/create-auth-url.js "${{ secrets.STAGING_AUTH_URL }}"
       - run: sfdx auth:sfdxurl:store -f "bin/sfdx-url.json" -a SFDC_ORG
-      - run: sfdx force:source:deploy -p "force-app/main/default/" -u SFDC_ORG --testlevel=RunSpecifiedTests --runtests "$(node scripts/js/sfbuilds/get-apex-tests.js)"
+      - run: sfdx force:source:deploy -m "ApexClass,ApexTrigger,CustomMetadata" -u SFDC_ORG --testlevel=RunSpecifiedTests --runtests "$(node scripts/js/sfbuilds/get-apex-tests.js)"
