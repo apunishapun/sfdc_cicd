@@ -1,0 +1,5 @@
+before_script:
+  - PACKAGE_NAME=sfcore
+  - PACKAGE_PASSWORD=booztersfcore12345
+  - npm i -g sfdx-cli
+  - mkdir bin

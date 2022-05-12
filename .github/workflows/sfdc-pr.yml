@@ -13,3 +13,8 @@ jobs:
     steps:
       - run: sfdx -v
       - run: java -version
+      - run: mkdir bin
+      - run: echo "{ \"sfdxAuthUrl\": \"$BZBOZ_AUTH_URL\" }" > "bin/staging-url.json"
+      - run: - sfdx auth:sfdxurl:store -f "bin/staging-url.json" -a SFDC_ORG
+      - run: TEST_CLS=$(node ./scripts/js/sfbuilds/get-apex-tests.js);
+      - run: sfdx force:source:deploy --checkonly -p "force-app/main/default/" -u SFDC_ORG --testlevel=RunSpecifiedTests --runtests "$TEST_CLS"
