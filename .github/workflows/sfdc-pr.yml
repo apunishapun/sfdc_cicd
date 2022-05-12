@@ -14,10 +14,7 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
-      - run: sfdx -v
-      - run: java -version
-      - run: mkdir bin
-      - run: ls -la
+      - run: sfdx -v && java -version && ls -la
       - run: node scripts/js/sfbuilds/create-auth-url.js "${{ secrets.STAGING_AUTH_URL }}"
       - run: sfdx auth:sfdxurl:store -f "bin/sfdx-url.json" -a SFDC_ORG
       - run: sfdx force:source:deploy --checkonly -p "force-app/main/default/" -u SFDC_ORG --testlevel=RunSpecifiedTests --runtests "$(node scripts/js/sfbuilds/get-apex-tests.js)"
