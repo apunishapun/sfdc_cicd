@@ -3,6 +3,8 @@ on:
   push:
     branches:
       - feature/*
+  pull_request:
+    types: [opened, reopened]
 jobs:
   validate_build:
     if: ${{ github.event_name == 'pull_request' }}
