@@ -4,8 +4,8 @@ on:
     branches:
       - feature/*
 jobs:
-  build_check:
-    if: ${{ github.event_name != 'pull_request' }}
+  validate_build:
+    if: ${{ github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
     container:
       image: salesforce/salesforcedx:latest-rc-full

@@ -5,6 +5,7 @@ on:
       - develop
 jobs:
   staging_push:
+    if: ${{ github.ref == 'develop' }}
     runs-on: ubuntu-latest
     container:
       image: salesforce/salesforcedx:latest-rc-full
