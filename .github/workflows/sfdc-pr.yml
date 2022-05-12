@@ -11,10 +11,12 @@ jobs:
     container:
       image: salesforce/salesforcedx:latest-rc-full
     steps:
+      uses: actions/checkout@v3
       - run: sfdx -v
       - run: java -version
       - run: mkdir bin
-      - run: node ./scripts/js/sfbuilds/get-apex-tests.js "${{ secrets.BZBOZ_AUTH_URL }}"
+      - run: ls -la
+      - run: node scripts/js/sfbuilds/get-apex-tests.js "${{ secrets.BZBOZ_AUTH_URL }}"
       - run: sfdx auth:sfdxurl:store -f "bin/sfdx-url.json" -a SFDC_ORG
-      - run: TEST_CLS=$(node ./scripts/js/sfbuilds/get-apex-tests.js);
+      - run: TEST_CLS=$(node scripts/js/sfbuilds/get-apex-tests.js);
       - run: sfdx force:source:deploy --checkonly -p "force-app/main/default/" -u SFDC_ORG --testlevel=RunSpecifiedTests --runtests "$TEST_CLS"
