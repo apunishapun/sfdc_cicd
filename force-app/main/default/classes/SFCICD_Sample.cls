@@ -9,7 +9,7 @@ public without sharing class SFCICD_Sample {
      * @param num2 Integer
      * @return Integer sum of num1 and num2
      */
-    public static void add(Integer num1, Integer num2) {
+    public static Integer add(Integer num1, Integer num2) {
         return num1 + num2;
     }
 }
