@@ -1,0 +1,18 @@
+{
+    "packageDirectories": [
+        {
+            "path": "force-app",
+            "default": true,
+            "package": "sfcore",
+            "versionName": "ver 1.2.3",
+            "versionNumber": "1.2.3.NEXT"
+        }
+    ],
+    "name": "sfcore",
+    "namespace": "",
+    "sfdcLoginUrl": "https://login.salesforce.com",
+    "sourceApiVersion": "51.0",
+    "packageAliases": {
+        "sfcore": "0Ho5g000000XZi9CAG"
+    }
+}

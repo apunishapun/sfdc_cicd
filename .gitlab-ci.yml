@@ -1,0 +1,81 @@
+image: node:12.13.0-alpine
+
+variables:
+  METADATA_DIR: force-app/main/default/
+  STAGING_URL_JSON: "bin/staging-url.json"
+  STAGING_ORG: "staging-org"
+  PROD_URL_JSON: "bin/production-url.json"
+  PROD_ORG: "production-org"
+
+stages:
+  - test
+  - build
+  - release
+
+include: '.app.yml'
+
+scan_package:
+  stage: test
+  script:
+    - apk update
+    - apk add openjdk8
+    - JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk
+    - PATH="$JAVA_HOME/bin:${PATH}"
+    - java -version
+    - sfdx plugins:install @salesforce/sfdx-scanner
+    - sfdx scanner:run --target "$METADATA_DIR" --severity-threshold 3 --pmdconfig pmd-rules.xml
+  only:
+    - merge_requests
+    - develop
+    - tags
+
+validate_package:
+  stage: test
+  script:
+    - |
+      echo "{ \"sfdxAuthUrl\": \"$STAGING_SFDX_AUTH_URL\" }" > "$STAGING_URL_JSON"
+    - sfdx auth:sfdxurl:store -f "$STAGING_URL_JSON" -a "$STAGING_ORG"
+    - TEST_CLS=$(node ./scripts/js/sfbuilds/get-apex-tests.js);
+    - sfdx force:source:deploy --checkonly -p "$METADATA_DIR" -u "$STAGING_ORG" --testlevel=RunSpecifiedTests --runtests "$TEST_CLS"
+  only:
+    - merge_requests
+    - develop
+    - tags
+
+build_package:
+  stage: build
+  script:
+    - |
+      echo "{ \"sfdxAuthUrl\": \"$PROD_SFDX_AUTH_URL\" }" > "$PROD_URL_JSON"
+    - sfdx auth:sfdxurl:store -f "$PROD_URL_JSON" -a "$PROD_ORG"
+    - sfdx force:package:version:create --package "$PACKAGE_NAME" --installationkey "$PACKAGE_PASSWORD" -v "$PROD_ORG" --codecoverage -w 30
+    - sfdx force:package:version:list -v "$PROD_ORG" -p "$PACKAGE_NAME" -c 0 --json > bin/versions.json
+    - |
+      echo "{ \"sfdxAuthUrl\": \"$STAGING_SFDX_AUTH_URL\" }" > "$STAGING_URL_JSON"
+    - sfdx auth:sfdxurl:store -f "$STAGING_URL_JSON" -a "$STAGING_ORG"
+    - LATEST_ID=$(node ./scripts/js/sfbuilds/get-latest-version-id.js);
+    - echo "Installing Below Version"
+    - sfdx force:package:version:report -p "$LATEST_ID" -v "$PROD_ORG"
+    - sfdx force:package:install -r -k "$PACKAGE_PASSWORD" -p "$LATEST_ID" -u "$STAGING_ORG" -w 30
+  only:
+    - develop
+  when: manual
+
+release_package:
+  stage: release
+  script:
+    - |
+      echo "{ \"sfdxAuthUrl\": \"$PROD_SFDX_AUTH_URL\" }" > "$PROD_URL_JSON"
+    - sfdx auth:sfdxurl:store -f "$PROD_URL_JSON" -a "$PROD_ORG"
+    - sfdx force:package:version:create --package "$PACKAGE_NAME" --installationkey "$PACKAGE_PASSWORD" -v "$PROD_ORG"  -t "$CI_COMMIT_TAG" -e "$CI_COMMIT_MESSAGE" --codecoverage -w 30
+    - echo "Current Versions"
+    - sfdx force:package:version:list -v "$PROD_ORG" -p "$PACKAGE_NAME" -c 0 --concise
+    - sfdx force:package:version:list -v "$PROD_ORG" -p "$PACKAGE_NAME" -c 0 --json > bin/versions.json
+    - LATEST_ID=$(node ./scripts/js/sfbuilds/get-latest-version-id.js);
+    - echo "Releasing Below Version"
+    - sfdx force:package:version:report -p "$LATEST_ID" -v "$PROD_ORG"
+    - sfdx force:package:version:promote -p "$LATEST_ID" -v "$PROD_ORG" --noprompt
+  only:
+    - tags
+  except:
+    - branches
