@@ -1,12 +1,11 @@
-name: SFDC Pull Request
+name: SFDC Staging Push
 on:  
   push:
-  pull_request:
     branches:
-      - feature/*
+      - develop
 jobs:
-  build_check:
-    if: ${{ github.ref != 'master' || github.ref != 'develop' }}
+  staging_push:
+    if: ${{ github.ref == 'develop'}}
     runs-on: ubuntu-latest
     container:
       image: salesforce/salesforcedx:latest-rc-full
@@ -19,4 +18,4 @@ jobs:
       - run: ls -la
       - run: node scripts/js/sfbuilds/create-auth-url.js "${{ secrets.STAGING_AUTH_URL }}"
       - run: sfdx auth:sfdxurl:store -f "bin/sfdx-url.json" -a SFDC_ORG
-      - run: sfdx force:source:deploy --checkonly -p "force-app/main/default/" -u SFDC_ORG --testlevel=RunSpecifiedTests --runtests "$(node scripts/js/sfbuilds/get-apex-tests.js)"
+      - run: sfdx force:source:deploy -p "force-app/main/default/" -u SFDC_ORG --testlevel=RunSpecifiedTests --runtests "$(node scripts/js/sfbuilds/get-apex-tests.js)"

@@ -1,12 +1,11 @@
-name: SFDC Pull Request
+name: SFDC Prod Validation
 on:  
   push:
-  pull_request:
     branches:
-      - feature/*
+      - master
 jobs:
-  build_check:
-    if: ${{ github.ref != 'master' || github.ref != 'develop' }}
+  prod_validate:
+    if: ${{ github.ref == 'master' }}
     runs-on: ubuntu-latest
     container:
       image: salesforce/salesforcedx:latest-rc-full
@@ -17,6 +16,6 @@ jobs:
       - run: java -version
       - run: mkdir bin
       - run: ls -la
-      - run: node scripts/js/sfbuilds/create-auth-url.js "${{ secrets.STAGING_AUTH_URL }}"
+      - run: node scripts/js/sfbuilds/create-auth-url.js "${{ secrets.PROD_AUTH_URL }}"
       - run: sfdx auth:sfdxurl:store -f "bin/sfdx-url.json" -a SFDC_ORG
       - run: sfdx force:source:deploy --checkonly -p "force-app/main/default/" -u SFDC_ORG --testlevel=RunSpecifiedTests --runtests "$(node scripts/js/sfbuilds/get-apex-tests.js)"
