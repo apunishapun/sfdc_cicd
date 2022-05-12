@@ -2,7 +2,7 @@ const fs = require('fs');
 
 const createAuthUrl = (sfdxUrl) => {
     try {
-        fs.writeFileSync('bin/sfdx-url.json', `"{ "sfdxAuthUrl": "${sfdxUrl}" }"`, 'utf-8');
+        fs.writeFileSync('bin/sfdx-url.json', `{ "sfdxAuthUrl": "${sfdxUrl}" }`, 'utf-8');
         console.log('SFDX auth url ready');
     } catch (err) {
         console.error(err);
