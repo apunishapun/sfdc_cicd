@@ -1,6 +1,8 @@
 name: SFDC Pull Request
 on:  
   push:
+    branches:
+      - feature/*
   pull_request:
     branches:
       - feature/*
