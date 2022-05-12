@@ -1,8 +1,10 @@
 name: SFDC Staging Push
-on: workflow_dispatch
+on:  
+  push:
+    branches:
+      - develop
 jobs:
   staging_push:
-    if: ${{ github.ref == 'develop' }}
     runs-on: ubuntu-latest
     container:
       image: salesforce/salesforcedx:latest-rc-full

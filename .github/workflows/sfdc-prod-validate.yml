@@ -5,7 +5,6 @@ on:
       - master
 jobs:
   prod_validate:
-    if: ${{ github.ref == 'master' }}
     runs-on: ubuntu-latest
     container:
       image: salesforce/salesforcedx:latest-rc-full
