@@ -1,7 +1,7 @@
 name: SFDC Staging Push
 on: workflow_dispatch
 jobs:
-  staging_validation:
+  staging_push:
     if: ${{ github.ref_name == 'develop' }}
     runs-on: ubuntu-latest
     container:
