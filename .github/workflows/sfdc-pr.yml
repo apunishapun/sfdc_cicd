@@ -16,7 +16,7 @@ jobs:
       - run: sfdx -v
       - run: java -version
       - run: mkdir bin
-      - run: ls -la
+      - run: ls -la node scripts/js/sfbuilds
       - run: node scripts/js/sfbuilds/create-auth-url.js "${{ secrets.BZBOZ_AUTH_URL }}"
       - run: sfdx auth:sfdxurl:store -f "bin/sfdx-url.json" -a SFDC_ORG
       - run: TEST_CLS=$(node scripts/js/sfbuilds/get-apex-tests.js);
