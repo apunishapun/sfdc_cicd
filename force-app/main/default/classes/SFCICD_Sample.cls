@@ -1,5 +1,5 @@
 /**
- * @description A sample class
+ * @description A sample class for cicd
  */
 public without sharing class SFCICD_Sample {
 
